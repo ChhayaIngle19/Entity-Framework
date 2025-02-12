@@ -46,7 +46,7 @@ namespace HospitalManagementCode.Data
                 {
                     var countries = new List<Country>
                     {
-                        new Country { Name = "United States", Abbr = "USA", CountryCode = "US", Continent = "North America", CreatedTimestamp=  },
+                        new Country { Name = "United States", Abbr = "USA", CountryCode = "US", Continent = "North America"  },
                         new Country { Name = "Canada", Abbr = "CAN", CountryCode = "CA", Continent = "North America" }
                     };
 
