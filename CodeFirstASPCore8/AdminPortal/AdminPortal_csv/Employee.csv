@@ -1,0 +1,6 @@
+Id,DateOfBirth,Gender,Email_Work,Email_Personal,Mobile_Work,Mobile_Personal,IsClinician,HireDate,IsActive,CreatedTimestamp,UpdatedTimestamp,HomeAddressId,WorkAddressId
+1,20-05-1990,Male,admin@hospital.com,,1234567890,,TRUE,01-01-2015,TRUE,2024-02-10T00:00:00Z,2024-02-10T00:00:00Z,,
+2,10-08-1985,Female,doctor@hospital.com,,9876543210,,TRUE,15-03-2017,TRUE,2024-02-10T00:00:00Z,2024-02-10T00:00:00Z,,
+3,25-11-1980,Male,nurse@hospital.com,,5551234567,,FALSE,12-06-2019,TRUE,2024-02-10T00:00:00Z,2024-02-10T00:00:00Z,,
+4,07-03-1992,Female,pharmacist@hospital.com,,5559876543,,FALSE,20-01-2020,TRUE,2024-02-10T00:00:00Z,2024-02-10T00:00:00Z,,
+5,15-06-1995,Male,admin2@hospital.com,,5555555555,,TRUE,10-09-2022,TRUE,2024-02-10T00:00:00Z,2024-02-10T00:00:00Z,,

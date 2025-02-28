@@ -25,12 +25,12 @@ namespace AdminPortal.Models
         [ForeignKey("CountryId")]
         public virtual Country? Country { get; set; }
 
-        public long? RegionId { get; set; }
-        [ForeignKey("RegionId")]
-        public virtual Region? Region { get; set; }
+        //public long? RegionId { get; set; }
+        //[ForeignKey("RegionId")]
+        //public virtual Region? Region { get; set; }
 
-        // A StateProvince can have multiple hospitals
-        public virtual ICollection<Hospital> Hospital { get; set; } = new List<Hospital>();
+        //// A StateProvince can have multiple hospitals
+        //public virtual ICollection<Hospital> Hospital { get; set; } = new List<Hospital>();
 
     }
 }
