@@ -19,7 +19,7 @@ namespace AdminPortal.Data
 
         //public DbSet<HCP> HCP { get; set; }
         //public DbSet<Region> Region { get; set; }
-        //public DbSet<StateProvince> StateProvince { get; set; }
+        public DbSet<StateProvince> StateProvince { get; set; }
         public DbSet<Country> Country { get; set; }
         //public DbSet<Hospital> Hospital { get; set; }
         //public DbSet<Employee> Employee { get; set; }
@@ -52,7 +52,7 @@ namespace AdminPortal.Data
                 if (!await context.Country.AnyAsync())
                 {
                     var filePath = "C:\\Users\\hp\\source\\repos\\Entity-Framework\\CodeFirstASPCore8\\AdminPortal\\AdminPortal_csv\\Country.csv";
-                    //var filePath = "C:\\Users\\hp\\Desktop\\country1.txt";
+                   
 
                     var batchSize = 1000; // Adjust the batch size as needed
 
@@ -260,8 +260,4 @@ namespace AdminPortal.Data
 
 //    }
 //}
-
-
-
-
 

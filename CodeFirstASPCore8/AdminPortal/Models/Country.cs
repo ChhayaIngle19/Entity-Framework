@@ -10,7 +10,7 @@ namespace AdminPortal.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        //[TypeConverter(typeof(Int64Converter))]
+       // [TypeConverter(typeof(Int64Converter))]
         public Int64? Id { get; set; }
 
         [Timestamp]
@@ -37,7 +37,7 @@ namespace AdminPortal.Models
         //public DateTime? UpdatedTimestamp { get; set; }
 
         // Navigation property: the country might have a related StateProvince (nullable)
-        // public virtual ICollection<StateProvince> StateProvince { get; set; }
+        public virtual ICollection<StateProvince> StateProvince { get; set; }
 
 
     }

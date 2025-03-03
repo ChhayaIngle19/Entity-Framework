@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -9,7 +10,11 @@ namespace AdminPortal.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Id { get; set; }
+        [TypeConverter(typeof(Int64Converter))]
+        public Int64? Id { get; set; }
+
+        [Timestamp]
+        public byte[]? Timestamp { get; set; }
 
         [Required, MaxLength(30)]
         public string? Name { get; set; }
@@ -17,8 +22,11 @@ namespace AdminPortal.Models
         [MaxLength(6)]
         public string? Abbr { get; set; }
 
-        public DateTime? CreatedTimestamp { get; set; }
-        public DateTime? UpdatedTimestamp { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public DateTime CreatedTimestamp { get; set; } = DateTime.UtcNow; // Auto-set on insert
+
+        public DateTime UpdatedTimestamp { get; set; } = DateTime.UtcNow; // Auto-set on insert and update
+
 
         // Foreign Key and Navigation property
         public long? CountryId { get; set; }

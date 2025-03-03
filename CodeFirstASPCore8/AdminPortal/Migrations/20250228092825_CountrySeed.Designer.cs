@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdminPortal.Migrations
 {
     [DbContext(typeof(AdminPortalDbContext))]
-    [Migration("20250227084041_CountrySeed1")]
-    partial class CountrySeed1
+    [Migration("20250228092825_CountrySeed")]
+    partial class CountrySeed
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

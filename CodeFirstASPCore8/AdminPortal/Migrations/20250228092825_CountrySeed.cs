@@ -5,7 +5,7 @@
 namespace AdminPortal.Migrations
 {
     /// <inheritdoc />
-    public partial class CountrySeed1 : Migration
+    public partial class CountrySeed : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
