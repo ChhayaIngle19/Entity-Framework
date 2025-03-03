@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -35,7 +34,7 @@ namespace AdminPortal
                     await context.Database.MigrateAsync();
 
                     // Ask the user which table they want to upload
-                    Console.WriteLine("Which table do you want to upload? (Country, StateProvince, PersonName, Employee, HCP, Region, Hospital, Address)");
+                    Console.WriteLine("Which table do you want to upload? (Country, StateProvince)");
                     string? tableName = Console.ReadLine()?.Trim();
 
                     // Get file path from appsettings.json
@@ -79,7 +78,7 @@ namespace AdminPortal
                     });
                 });
 
-        // Generic method to upload CSV data
+        // Handles table uploads
         static async Task UploadFileAsync(AdminPortalDbContext context, string tableName, string filePath)
         {
             if (!File.Exists(filePath))
@@ -91,105 +90,98 @@ namespace AdminPortal
             switch (tableName.ToLower())
             {
                 case "country":
-                    await SeedTableAsync<Country>(context.Country, filePath, context);
+                    await SeedCountriesAsync(context, filePath);
                     break;
                 case "stateprovince":
-                    await SeedTableAsync<StateProvince>(context.StateProvince, filePath, context);
+                    await SeedStatesAsync(context, filePath);
                     break;
-                //case "personname":
-                //    await SeedTableAsync<PersonName>(context.PersonName, filePath, context);
-                //    break;
-                //case "employee":
-                //    await SeedTableAsync<Employee>(context.Employee, filePath, context);
-                //    break;
-                //case "hcp":
-                //    await SeedTableAsync<HCP>(context.HCP, filePath, context);
-                //    break;
-                //case "region":
-                //    await SeedTableAsync<Region>(context.Region, filePath, context);
-                //    break;
-                //case "hospital":
-                //    await SeedTableAsync<Hospital>(context.Hospital, filePath, context);
-                //    break;
-                //case "address":
-                //    await SeedTableAsync<Address>(context.Address, filePath, context);
-                //    break;
                 default:
                     Console.WriteLine("Invalid table name!");
                     break;
             }
         }
 
-        // Generic method for inserting data from CSV
-        static async Task SeedTableAsync<T>(DbSet<T> dbSet, string filePath, AdminPortalDbContext context) where T : class
-{
-    try
-    {
-        using var reader = new StreamReader(filePath);
-        using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
-        {
-            MissingFieldFound = null,
-            HeaderValidated = null, // Ignore header validation
-            IgnoreBlankLines = true,
-            Delimiter = ","
-        });
-
-        csv.Context.TypeConverterOptionsCache.GetOptions<long?>().NullValues.Add(string.Empty);
-
-        var records = new List<T>();
-        int batchSize = 1000;
-        int totalRecords = 0;
-
-        while (csv.Read())
+        // ✅ Inserts Country data first
+        static async Task SeedCountriesAsync(AdminPortalDbContext context, string filePath)
         {
             try
             {
-                var record = csv.GetRecord<T>();
-
-                // Handle foreign key mapping for StateProvince
-                if (record is StateProvince state)
+                using var reader = new StreamReader(filePath);
+                using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
                 {
-                    var country = await context.Country.FirstOrDefaultAsync(c => c.Id == state.CountryId);
-                    if (country == null)
-                    {
-                        Console.WriteLine($"Skipping row {csv.Parser.Row}: Invalid CountryId {state.CountryId}");
-                        continue;
-                    }
-                }
+                    MissingFieldFound = null,
+                    HeaderValidated = null,
+                    IgnoreBlankLines = true,
+                    Delimiter = ","
+                });
 
-                records.Add(record);
+                var records = csv.GetRecords<Country>().ToList();
+
+                // ✅ Insert country data (Avoids duplicate tracking issues)
+                await context.Country.AddRangeAsync(records);
+                await context.SaveChangesAsync();
+
+                Console.WriteLine($"Country data seeded successfully! Total records inserted: {records.Count}");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error parsing CSV row at line {csv.Parser.Row}: {ex.Message}");
-                continue;
-            }
-
-            if (records.Count >= batchSize)
-            {
-                await dbSet.AddRangeAsync(records);
-                await context.SaveChangesAsync();
-                totalRecords += records.Count;
-                records.Clear();
+                Console.WriteLine($"Error reading Country CSV file: {ex.Message}");
             }
         }
 
-        if (records.Count > 0)
+        // ✅ Inserts StateProvince data while ensuring `Country` exists
+        static async Task SeedStatesAsync(AdminPortalDbContext context, string filePath)
         {
-            await dbSet.AddRangeAsync(records);
-            await context.SaveChangesAsync();
-            totalRecords += records.Count;
+            try
+            {
+                using var reader = new StreamReader(filePath);
+                using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
+                {
+                    MissingFieldFound = null,
+                    HeaderValidated = null,
+                    IgnoreBlankLines = true,
+                    Delimiter = ","
+                });
+
+                var csvRecords = csv.GetRecords<StateProvince>().ToList();
+                var states = new List<StateProvince>();
+
+                foreach (var record in csvRecords)
+                {
+                    // ✅ Check if the Country already exists in the DbContext or Database
+                    var country = await context.Country.FirstOrDefaultAsync(c => c.CountryId == record.CountryId);
+
+                    if (country == null)
+                    {
+                        // ✅ If country doesn't exist, create a new one
+                        country = new Country { CountryId = record.CountryId, Name = "Unknown", Abbr = "UNK" }; // "Unknown" in case name is missing
+                        await context.Country.AddAsync(country);
+                        await context.SaveChangesAsync();
+                    }
+
+                    var stateProvince = new StateProvince
+                    {
+                        Name = record.Name,
+                        Abbr = record.Abbr,
+                        CountryId = record.CountryId,
+                        Country = country // ✅ Correct: Uses the existing `Country` instance
+                    };
+
+                    states.Add(stateProvince);
+                }
+
+                // ✅ Insert valid states
+                if (states.Any())
+                {
+                    await context.StateProvince.AddRangeAsync(states);
+                    await context.SaveChangesAsync();
+                    Console.WriteLine($"StateProvince data seeded successfully! Total records inserted: {states.Count}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error reading StateProvince CSV file: {ex.Message}");
+            }
         }
-
-        Console.WriteLine($"{typeof(T).Name} data seeded successfully! Total records inserted: {totalRecords}");
     }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Error reading CSV file: {ex.Message}");
-    }
-   
-        }
-
-    }
-
 }

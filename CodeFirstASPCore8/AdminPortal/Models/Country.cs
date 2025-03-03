@@ -11,7 +11,7 @@ namespace AdminPortal.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
        // [TypeConverter(typeof(Int64Converter))]
-        public Int64? Id { get; set; }
+        public Int64 CountryId { get; set; }
 
         [Timestamp]
         public byte[]? Timestamp { get; set; }
@@ -32,13 +32,8 @@ namespace AdminPortal.Models
 
         public DateTime UpdatedTimestamp { get; set; } = DateTime.UtcNow; // Auto-set on insert and update
 
-
-        //public DateTime? CreatedTimestamp { get; set; }
-        //public DateTime? UpdatedTimestamp { get; set; }
-
-        // Navigation property: the country might have a related StateProvince (nullable)
-        public virtual ICollection<StateProvince> StateProvince { get; set; }
-
+        // Navigation property:  (One-to-Many Relationship)
+        public virtual ICollection<StateProvince> StateProvinces { get; set; }
 
     }
 }

@@ -163,101 +163,20 @@ namespace AdminPortal.Data
             }
         }
 
-        private static List<T> ReadCsv<T>(string filePath)
-        {
-            if (!File.Exists(filePath))
-            {
-                Console.WriteLine($"File not found: {filePath}");
-                return new List<T>();
-            }
+        //private static List<T> ReadCsv<T>(string filePath)
+        //{
+        //    if (!File.Exists(filePath))
+        //    {
+        //        Console.WriteLine($"File not found: {filePath}");
+        //        return new List<T>();
+        //    }
 
-            using (var reader = new StreamReader(filePath))
-            using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)))
-            {
-                return csv.GetRecords<T>().ToList();
-            }
-        }
+        //    using (var reader = new StreamReader(filePath))
+        //    using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)))
+        //    {
+        //        return csv.GetRecords<T>().ToList();
+        //    }
+        //}
     }
 }
-
-
-
-
-
-//using System;
-//using Microsoft.EntityFrameworkCore;
-//using AdminPortal.Models;
-
-//namespace AdminPortal.Data
-//{
-//    public class AdminPortalDbContext : DbContext
-//    {
-//        // Default constructor for design-time support
-//        public AdminPortalDbContext() { }
-
-//        public AdminPortalDbContext(DbContextOptions<AdminPortalDbContext> options) : base(options)
-//        {
-//        }
-
-//        public DbSet<HCP> HCP { get; set; }
-//        public DbSet<Region> Region { get; set; }
-//        public DbSet<StateProvince> StateProvince { get; set; }
-//        public DbSet<Country> Country { get; set; }
-//        public DbSet<Hospital> Hospital { get; set; }
-//        public DbSet<Employee> Employee { get; set; }
-//        public DbSet<PersonName> PersonName { get; set; }
-//        public DbSet<Address> Address { get; set; }
-
-//        // Configuring SQL Server connection (Only if not configured in Program.cs)
-//        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//        {
-//            if (!optionsBuilder.IsConfigured)
-//            {
-//                optionsBuilder.UseSqlServer("Server=DESKTOP-U58E1DM\\SQLEXPRESS;Database=AdminPortal;Trusted_Connection=True;Encrypt=False;");
-//            }
-//        }
-
-//        protected override void OnModelCreating(ModelBuilder modelBuilder)
-//        {
-//            base.OnModelCreating(modelBuilder);
-
-//            //// Address -> Employee
-//            //modelBuilder.Entity<Address>()
-//            //    .HasOne(a => a.Employee)
-//            //    .WithMany(e => e.Address)
-//            //    .HasForeignKey(a => a.EmployeeId)
-//            //    .OnDelete(DeleteBehavior.Restrict);
-
-//            // Employee ↔ Address (One-to-Many)
-//            modelBuilder.Entity<Address>()
-//                .HasOne(a => a.Employee)
-//                .WithMany(e => e.Addresses)
-//                .HasForeignKey(a => a.EmployeeId)
-//                .OnDelete(DeleteBehavior.Cascade);
-
-//            // Employee ↔ HCP (Many-to-One)
-//            modelBuilder.Entity<Employee>()
-//                .HasOne(e => e.HCP)
-//                .WithMany(h => h.Employee)
-//                .HasForeignKey(e => e.HCPId)
-//                .OnDelete(DeleteBehavior.Cascade);
-
-//            // Region -> HCP
-//            modelBuilder.Entity<Region>()
-//                .HasOne(r => r.HCP)
-//                .WithMany()
-//                .HasForeignKey(r => r.HCPId)
-//                .OnDelete(DeleteBehavior.Restrict);
-
-//            // HCP -> PrimaryAdmin (Employee)
-//            modelBuilder.Entity<HCP>()
-//                .HasOne(h => h.PrimaryAdmin)
-//                .WithMany()
-//                .HasForeignKey(h => h.EmployeeId)
-//                .OnDelete(DeleteBehavior.Restrict);
-
-//        }
-
-//    }
-//}
 

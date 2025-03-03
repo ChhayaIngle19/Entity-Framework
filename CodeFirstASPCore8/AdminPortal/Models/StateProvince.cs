@@ -10,8 +10,8 @@ namespace AdminPortal.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [TypeConverter(typeof(Int64Converter))]
-        public Int64? Id { get; set; }
+       // [TypeConverter(typeof(Int64Converter))]
+        public Int64 StateProvinceId { get; set; }
 
         [Timestamp]
         public byte[]? Timestamp { get; set; }
@@ -20,7 +20,7 @@ namespace AdminPortal.Models
         public string? Name { get; set; }
 
         [MaxLength(6)]
-        public string? Abbr { get; set; }
+        public required string Abbr { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public DateTime CreatedTimestamp { get; set; } = DateTime.UtcNow; // Auto-set on insert
@@ -29,7 +29,7 @@ namespace AdminPortal.Models
 
 
         // Foreign Key and Navigation property
-        public long? CountryId { get; set; }
+        public Int64 CountryId { get; set; }
         [ForeignKey("CountryId")]
         public virtual Country? Country { get; set; }
 

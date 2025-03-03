@@ -4,6 +4,7 @@ using AdminPortal.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdminPortal.Migrations
 {
     [DbContext(typeof(AdminPortalDbContext))]
-    partial class AdminPortalDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250303081006_CountryStateSeed1")]
+    partial class CountryStateSeed1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -75,11 +78,10 @@ namespace AdminPortal.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("StateProvinceId"));
 
                     b.Property<string>("Abbr")
-                        .IsRequired()
                         .HasMaxLength(6)
                         .HasColumnType("nvarchar(6)");
 
-                    b.Property<long>("CountryId")
+                    b.Property<long?>("CountryId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedTimestamp")
@@ -110,9 +112,7 @@ namespace AdminPortal.Migrations
                 {
                     b.HasOne("AdminPortal.Models.Country", "Country")
                         .WithMany("StateProvinces")
-                        .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CountryId");
 
                     b.Navigation("Country");
                 });
